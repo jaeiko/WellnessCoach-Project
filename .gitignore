@@ -1,0 +1,61 @@
+# ================= FOLDERS & FILES TO IGNORE =================
+
+# 운영체제 생성 파일 (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# ---------------- Python / VSCode ----------------
+
+# 가상환경
+venv/
+.venv/
+env/
+ENV/
+
+# 컴파일된 파이썬 파일
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE 설정
+.vscode/
+.idea/ # Android Studio와 공통
+
+# ---------------- Android Studio / Gradle ----------------
+# 경로를 명시하여, backend-python 폴더의 build/ 등이 무시되지 않도록 함
+
+# 빌드 결과물
+/android-app/build/
+/android-app/app/build/
+
+# Gradle 캐시
+.gradle/
+/android-app/.gradle/
+
+# 컴파일된 앱 파일
+*.apk
+*.aab
+
+# 사용자별 로컬 설정 (SDK 경로 등)
+local.properties
+/android-app/local.properties
+
+
+# ---------------- 민감 정보 (Secrets) ----------------
+# API 키, 인증서 등 절대로 GitHub에 올리면 안되는 파일들
+
+# 환경 변수 파일
+*.env
+
+# 인증서 및 키 파일
+*.jks
+*.keystore
+token.json
+
+# 🔽 모든 .json 파일을 기본적으로 무시
+*.json
+
+# 🔽 단, 아래 두 개의 json 파일은 예외적으로 허용 (우리 프로젝트에 필요)
+!/backend-python/firebase_credentials.json
+!/android-app/app/google-services.json
+!/backend-python/data/sample_data.json

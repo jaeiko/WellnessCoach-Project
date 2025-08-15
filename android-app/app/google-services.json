@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "783187207537",
+    "project_id": "wellnesscoachai",
+    "storage_bucket": "wellnesscoachai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783187207537:android:b3044e81db0c9e93fec2d0",
+        "android_client_info": {
+          "package_name": "com.samsung.health.mysteps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAacFoi8YNz6llZ2fUSjwZl2wf7IrJdaO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

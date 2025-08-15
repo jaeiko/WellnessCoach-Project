@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">My Steps</string>
+    <string name="steps_by_hour">Steps by hour</string>
+    <string name="summary_text_steps">steps</string>
+    <string name="text_Target">Target</string>
+    <string name="menu_item_Connect">Connect to Samsung Health</string>
+    <string name="menu_caption">More</string>
+    <string name="last_updated_time">Updated %1$s</string>
+    <string name="title_activity_permissions_rationale">PermissionsRationaleActivity</string>
+    <string name="no_permission_text">To see your step summary please go to app settings and grant the permissions.</string>
+    <string name="oops_i_did_it_again">Oops!</string>
+    <string name="pull_down_to_refresh">Pull down to refresh</string>
+    <string name="refer_to_doc">Refer to the documentation for details.</string>
+
+    <string name="error_resolution_2000">To see your step summary please go to app settings and grant all permissions.</string>
+    <string name="error_resolution_2003">Go to Samsung Health app > Settings >\nAbout Samsung Health\nTap on \'Version\' 10 times\nto unveil \'Developer Mode (new)\'\n Set to \'ON\'</string>
+    <string name="error_resolution_2004">Go to Samsung Health app > Settings >\nAbout Samsung Health\nTap on \'Version\' 10 times\nto unveil \'Developer Mode (new)\'\n Set to \'ON\'</string>
+
+    <string name="error_resolution_3000">Please install Samsung Health app.</string>
+    <string name="error_resolution_3001">Please update Samsung Health app.</string>
+    <string name="error_resolution_3002">Please finish setting up Samsung Health app.</string>
+    <string name="error_resolution_3003">Please finish setting up Samsung Health app.</string>
+    <string name="error_resolution_3004">Enable network connection.</string>
+
+    <string name="error_resolution_platform_errors">Please try again later.</string>
+</resources>
