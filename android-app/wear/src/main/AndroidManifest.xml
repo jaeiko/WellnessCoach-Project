@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApp"> <!-- Theme.MyApp이 간단한 Wear OS 테마인지 확인하거나, Compose가 모든 테마를 처리하는 경우 제거 -->
+        <uses-library
+            android:name="com.google.android.wearable"
+            android:required="true" />
+        <!-- wear-sdk 라이브러리는 deprecated 되었으므로, 일반적으로 제거해도 됩니다. -->
+        <!-- <uses-library
+            android:name="wear-sdk"
+            android:required="false" /> -->
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true"
+            android:taskAffinity="" > <!-- 여기서 android:theme 제거 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

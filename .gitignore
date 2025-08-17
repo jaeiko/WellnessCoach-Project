@@ -27,6 +27,7 @@ __pycache__/
 # 빌드 결과물
 /android-app/build/
 /android-app/app/build/
+/android-app/.idea/
 
 # Gradle 캐시
 .gradle/
@@ -56,6 +57,8 @@ token.json
 *.json
 
 # 🔽 단, 아래 두 개의 json 파일은 예외적으로 허용 (우리 프로젝트에 필요)
-!/backend-python/firebase_credentials.json
 !/android-app/app/google-services.json
 !/backend-python/data/sample_data.json
+
+# PEM key files
+*.pem

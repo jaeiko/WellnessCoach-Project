@@ -13,7 +13,7 @@ import asyncio
 import os
 import google.generativeai as genai
 from multi_tool_agent.tools import get_health_data
-from multi_tool_agent.agent import agent
+from multi_tool_agent.agent import root_agent
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="multi_tool_agent/.env")
 
@@ -138,7 +138,7 @@ class ConversationManager:
 
 
 async def main():
-    manager = ConversationManager(agent=agent)
+    manager = ConversationManager(agent=root_agent)
     await manager.initialize()
     await manager.send_message(input("AI에게 먼저 분석을 시작하도록 지시하세요: "))
     while True:

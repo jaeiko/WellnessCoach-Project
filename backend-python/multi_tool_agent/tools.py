@@ -53,7 +53,7 @@ def get_health_data() -> str:
         print("INFO: Firestore에서 사용자 프로필을 성공적으로 가져왔습니다.")
         try:
             # 나머지 데이터는 로컬 파일에서 가져와 결합합니다.
-            with open("data/sample_data.json", "r", encoding="utf-8") as f:
+            with open("backend-python/data/sample_data.json", "r", encoding="utf-8") as f:
                 health_data = json.load(f)
                 health_data['user_profile'] = user_profile
                 return json.dumps(health_data, ensure_ascii=False)
