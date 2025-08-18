@@ -136,6 +136,54 @@ class ConversationManager:
         else:
             print("\nAI 비서: 죄송합니다, 답변을 생성하는 데 실패했습니다.")
 
+    
+    async def send_message_for_api(self, query: str, health_data: dict | None) -> str:
+        """API 요청을 처리하고 AI의 최종 응답 텍스트를 반환하는 전용 함수"""
+        full_query = ""
+        try:
+            with open("prompts/analytics_prompt.txt", "r", encoding="utf-8") as f:
+                prompt_template = f.read()
+        except FileNotFoundError:
+            return '{"error": "prompt file not found"}'
+
+        # ❗️ 전달받은 health_data를 프롬프트에 주입합니다.
+        # health_data가 없는 일반 대화일 수도 있습니다.
+        if health_data:
+            print("\nSYSTEM: Health data received. Injecting into prompt...")
+            final_prompt = prompt_template.replace("((USER_GOAL))", query)
+            final_prompt = final_prompt.replace("((USER_PROFILE))", json.dumps(health_data.get("user_profile", {}), ensure_ascii=False))
+            final_prompt = final_prompt.replace("((TIMESERIES_DATA))", json.dumps(health_data.get("timeseries_data", []), ensure_ascii=False))
+            final_prompt = final_prompt.replace("((SLEEP_DATA))", json.dumps(health_data.get("sleep_data", {}), ensure_ascii=False))
+            final_prompt = final_prompt.replace("((EXERCISE_DATA))", json.dumps(health_data.get("exercise_data", []), ensure_ascii=False))
+            final_prompt = final_prompt.replace("((NUTRITION_DATA))", json.dumps(health_data.get("nutrition_data", {}), ensure_ascii=False))
+            final_prompt = final_prompt.replace("((VITALS_DATA))", json.dumps(health_data.get("vitals_data", {}), ensure_ascii=False))
+        else:
+            final_prompt = prompt_template
+
+        # 대화 기록을 가져와 프롬프트에 주입합니다.
+        history_list = get_conversation_history(db=self.db, user_id=self.session_info["user_id"])
+        history_str = "\n".join(history_list)
+        final_prompt = final_prompt.replace("((CONVERSATION_HISTORY))", history_str)
+
+        full_query = f"{final_prompt}\n\nLatest User Query: {query}"
+        
+        content = types.Content(role='user', parts=[types.Part(text=full_query)])
+        
+        final_response_text = "죄송합니다, 답변을 생성하는 데 실패했습니다."
+        async for event in self.runner.run_async(user_id=self.session_info["user_id"], session_id=self.session_info["session_id"], new_message=content):
+            if event.is_final_response():
+                final_response_text = event.content.parts[0].text
+                break
+        
+        # 대화 내용을 DB에 저장합니다.
+        save_conversation_turn(
+            db=self.db, user_id=self.session_info["user_id"],
+            session_id=self.session_info["session_id"],
+            user_query=query, ai_response=final_response_text
+        )
+        
+        return final_response_text
+
 
 async def main():
     manager = ConversationManager(agent=root_agent)
