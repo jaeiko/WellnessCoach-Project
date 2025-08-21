@@ -32,6 +32,7 @@ import com.samsung.android.sdk.health.data.error.ResolvablePlatformException
 import com.samsung.health.mysteps.domain.Permissions.PERMISSIONS
 import com.samsung.health.mysteps.presentation.ui.Main
 import com.samsung.health.mysteps.presentation.ui.theme.PhoneAppTheme
+import com.samsung.health.mysteps.presentation.ui.ChatScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,14 +77,15 @@ class MainActivity : ComponentActivity() {
 
             PhoneAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Main(
-                        state.steps,
-                        refresh,
-                        state.permissionsGranted,
-                        errorCode,
-                        errorDescription,
-                        { requestPermissions(activityContext) },
-                        { if (refresh) viewModel.readSteps(); else viewModel.refresh() })
+                    ChatScreen(viewModel = viewModel)
+//                    Main(
+//                        state.steps,
+//                        refresh,
+//                        state.permissionsGranted,
+//                        errorCode,
+//                        errorDescription,
+//                        { requestPermissions(activityContext) },
+//                        { if (refresh) viewModel.readSteps(); else viewModel.refresh() })
                 }
             }
         }

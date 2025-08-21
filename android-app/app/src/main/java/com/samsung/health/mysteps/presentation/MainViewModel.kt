@@ -15,6 +15,13 @@
  */
 package com.samsung.health.mysteps.presentation
 
+
+import com.samsung.health.mysteps.data.api.ChatApiService
+import com.samsung.health.mysteps.data.model.ChatMessage
+import com.samsung.health.mysteps.data.model.ChatRequest
+import com.samsung.health.mysteps.data.model.Sender
+import kotlinx.coroutines.flow.asStateFlow
+import java.util.UUID
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,12 +49,20 @@ private const val TAG = "MainViewModel"
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val arePermissionsGrantedUseCase: ArePermissionsGrantedUseCase,
-    private val readStepDataUseCase: ReadStepDataUseCase
+    private val readStepDataUseCase: ReadStepDataUseCase,
+    private val chatApiService: ChatApiService
 ) : ViewModel() {
     init {
         Log.i(TAG, "init()")
         checkPermissions()
     }
+
+    private val sessionId = "session_${UUID.randomUUID()}"
+    private val userId = "user_1" // 임시 사용자 ID
+
+    // 채팅 메시지 목록 (UI가 관찰)
+    private val _chatMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
+    val chatMessages: StateFlow<List<ChatMessage>> = _chatMessages.asStateFlow()
 
     private val _state =
         MutableStateFlow(
@@ -185,6 +200,35 @@ class MainViewModel @Inject constructor(
             .set(healthLog, com.google.firebase.firestore.SetOptions.merge())
             .addOnSuccessListener { Log.d("FIRESTORE", "데이터 전송 성공!") }
             .addOnFailureListener { e -> Log.w("FIRESTORE", "데이터 전송 실패", e) }
+    }
+
+    // 메시지 전송 함수
+    fun sendMessage(message: String) {
+        // 사용자 메시지를 채팅 목록에 추가
+        val userMessage = ChatMessage(text = message, sender = Sender.USER)
+        _chatMessages.value = _chatMessages.value + userMessage
+
+        // AI 응답 대기 메시지 추가
+        val loadingMessage = ChatMessage(text = "...", sender = Sender.MODEL)
+        _chatMessages.value = _chatMessages.value + loadingMessage
+
+        viewModelScope.launch {
+            try {
+                val request = ChatRequest(userId = userId, sessionId = sessionId, message = message)
+                val response = chatApiService.sendMessage(request)
+
+                // AI 응답을 채팅 목록에 추가
+                val modelMessage = ChatMessage(text = response.chatResponse, sender = Sender.MODEL)
+
+                // 대기 메시지를 실제 응답으로 교체
+                _chatMessages.value = _chatMessages.value.dropLast(1) + modelMessage
+
+            } catch (e: Exception) {
+                Log.e("ChatViewModel", "메시지 전송 실패", e)
+                val errorMessage = ChatMessage(text = "오류가 발생했습니다: ${e.message}", sender = Sender.MODEL)
+                _chatMessages.value = _chatMessages.value.dropLast(1) + errorMessage
+            }
+        }
     }
 }
 
