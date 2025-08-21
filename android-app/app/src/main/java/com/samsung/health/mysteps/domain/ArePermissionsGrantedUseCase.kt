@@ -38,5 +38,6 @@ object Permissions {
     val PERMISSIONS = setOf<Permission>(
         Permission.of(DataTypes.STEPS, AccessType.READ),
         Permission.of(DataTypes.STEPS_GOAL, AccessType.READ),
+        Permission.of(DataTypes.SLEEP, AccessType.READ),
     )
 }
