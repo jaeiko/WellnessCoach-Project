@@ -51,12 +51,14 @@ After you have completed the initial analysis and presented it to the user, your
 -   **Information Seeking:** When the user asks for general information, health news, or facts that are not covered by the internal knowledge base, use the `search_naver_news` tool to find up-to-date information.
 
 ### Final Output Instruction
-Your final response **MUST BE a single, valid JSON object** containing exactly two keys: "analysis_json" and "response_for_user".
-
-1.  `"analysis_json"`: The value for this key must be the **full, detailed analysis JSON object** that you formulated internally, following the schema provided in this prompt.
-2.  `"response_for_user"`: The value for this key must be the **friendly, natural KOREAN summary** intended for the user. This summary should be based on the key findings within your `analysis_json`.
-
-**CRITICAL: Your output must be the raw JSON text ONLY.** Do not include Markdown formatting like ` ```json` or any other explanatory text before or after the JSON object.
+**IMPORTANT: Your response format depends on the task you are performing.**
+1.  **WHEN PERFORMING DATA ANALYSIS (following the 'Initial Analysis Phase' workflow):**
+    Your final response **MUST BE a single, valid JSON object** containing exactly two keys: "analysis_json" and "response_for_user".
+    - `"analysis_json"`: The full, detailed analysis JSON object.
+    - `"response_for_user"`: The friendly, natural KOREAN summary for the user.
+    **CRITICAL: For this case, your output must be the raw JSON text ONLY.** Do not include Markdown formatting like ` ```json`.
+2.  **FOR ALL OTHER TASKS (Tool Use, Coaching, simple questions):**
+    Your final response **MUST BE a natural KOREAN sentence ONLY.** Do not wrap it in JSON. Provide a direct, friendly, and helpful text response.CRITICAL: Your output must be the raw JSON text ONLY.** Do not include Markdown formatting like ` ```json` or any other explanatory text before or after the JSON object.
 
 **Example of your final output format:**
 ```json

@@ -181,11 +181,13 @@ def _get_calendar_credentials() -> Credentials | None:
 
 def google_calendar_create_single_event(title: str, start_time: str, end_time: str) -> str:
     """
-    주어진 제목과 시간으로 구글 캘린더에 단일 이벤트를 생성합니다.
+    Create a single event in your Google Calendar with the given title and time.
+    IMPORTANT: start_time and end_time must be in the format 'YYYY-MM-DDTHH:MM:SS'.
+    If the user spoke in natural language like 'Tomorrow morning at 8am', it should be converted using the 'convert_natural_time_to_iso' tool first.
     Args:
-        title (str): 이벤트 제목.
-        start_time (str): 시작 시간 ('YYYY-MM-DDTHH:MM:SS' 형식).
-        end_time (str): 종료 시간 ('YYYY-MM-DDTHH:MM:SS' 형식).
+        Title (str): Event title.
+        start_time (str): Start time (in the format 'YYYY-MM-DDTHH:MM:SS'.
+        end_time (str): End time (in the format 'YYYY-MM-DDTHH:MM:SS'.
     """
     print(f"TOOL CALLED: google_calendar_create_single_event(title='{title}')")
     creds = _get_calendar_credentials()
@@ -209,12 +211,14 @@ def google_calendar_create_single_event(title: str, start_time: str, end_time: s
 
 def google_calendar_create_recurring_event(title: str, start_time: str, end_time: str, recurrence_weeks: int) -> str:
     """
-    주어진 제목과 시간으로 구글 캘린더에 매주 반복되는 이벤트를 생성합니다.
+    Create weekly recurring events in your Google Calendar with the given title and time.
+    IMPORTANT: start_time and end_time must be in the format 'YYYY-MM-DDTHH:MM:SS'.
+    If the user spoke in natural language like 'every Monday at 9 o'clock', the 'convert_natural_time_to_iso' tool should be used first.
     Args:
-        title (str): 이벤트 제목.
-        start_time (str): 시작 시간 ('YYYY-MM-DDTHH:MM:SS' 형식).
-        end_time (str): 종료 시간 ('YYYY-MM-DDTHH:MM:SS' 형식).
-        recurrence_weeks (int): 이벤트가 반복될 총 주(week) 수.
+        Title (str): Event title.
+        start_time (str): Start time (in the format 'YYYY-MM-DDTHH:MM:SS'.
+        end_time (str): End time (in the format 'YYYY-MM-DDTHH:MM:SS'.
+        recurrent_weeks (int): Total number of weeks in which the event will be repeated.
     """
     print(
         f"TOOL CALLED: google_calendar_create_recurring_event(title='{title}', weeks={recurrence_weeks})")
@@ -267,7 +271,7 @@ def get_weather(location: str) -> str:
 
 def search_naver_news(query: str) -> str:
     """
-    Naver 뉴스 API를 사용하여 주어진 쿼리에 대한 최신 뉴스 기사 3개를 검색하고 요약합니다.
+    Use the Naver News API to retrieve and summarize three recent news articles for a given query.
     """
     print(f"TOOL CALLED: search_naver_news(query='{query}')")
 
@@ -316,8 +320,9 @@ def search_naver_news(query: str) -> str:
 
 def find_nearby_places(query: str) -> str:
     """
-    주어진 검색어로 주변 장소를 찾습니다. (예: '동작구 주변 한의원')
-    Naver Developers의 '검색' API를 사용합니다.
+    Search the surrounding places based on the user's request. (e.g. 'Gangnam Station Neighborhood Park' and 'Sinsa-dong Restaurant')
+    Use Naver Developers 'search' API.
+    IMPORTANT: Instead of abstract expressions such as 'good for walking', it is recommended to specify the type of place, such as 'park' and 'gym'.
     """
     print(f"TOOL CALLED: find_nearby_places(query='{query}')")
 
