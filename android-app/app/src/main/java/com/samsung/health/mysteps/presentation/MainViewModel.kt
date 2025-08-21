@@ -61,7 +61,22 @@ class MainViewModel @Inject constructor(
     private val userId = "user_1" // 임시 사용자 ID
 
     // 채팅 메시지 목록 (UI가 관찰)
-    private val _chatMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
+    private val _chatMessages = MutableStateFlow<List<ChatMessage>>(
+        listOf(
+            ChatMessage(
+                text = """
+                    안녕하세요! 저는 당신의 건강한 삶을 돕는 AI 웰니스 코치입니다. 😊
+
+                    걸음 수, 수면 데이터 등을 분석하여 건강 상태를 알려드리고, 맞춤형 건강 루틴을 제안해 드릴 수 있어요.
+
+                    먼저, 저에게 이렇게 물어보시는 건 어떨까요?
+                    "오늘 내 건강 데이터 분석해줘"
+                """.trimIndent(), // trimIndent()를 사용하면 코드의 들여쓰기가 제거되어 깔끔하게 보입니다.
+                sender = Sender.MODEL
+            )
+        )
+    )
+
     val chatMessages: StateFlow<List<ChatMessage>> = _chatMessages.asStateFlow()
 
     private val _state =
