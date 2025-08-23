@@ -20,7 +20,6 @@ root_agent = Agent(
     model="gemini-2.0-flash",
     description="A comprehensive AI wellness coach that analyzes health data, suggests routines, and finds nearby places.",
     instruction=HEALTHCARE_ANALYTICS_INSTRUCTIONS,  # instruction에 읽어온 프롬프트를 직접 전달
-
     # ⭐ 모든 도구를 이 하나의 에이전트에게 줍니다.
     tools=[
         get_health_data,

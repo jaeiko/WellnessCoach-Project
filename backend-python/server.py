@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import uvicorn
 from typing import Optional, Dict, Any
 import json
 

@@ -322,7 +322,7 @@ def find_nearby_places(query: str) -> str:
     """
     Search the surrounding places based on the user's request. (e.g. 'Gangnam Station Neighborhood Park' and 'Sinsa-dong Restaurant')
     Use Naver Developers 'search' API.
-    IMPORTANT: Instead of abstract expressions such as 'good for walking', it is recommended to specify the type of place, such as 'park' and 'gym'.
+    CRITICAL: For accurate results, the 'query' MUST contain a specific location name like a district ('-gu'), neighborhood ('-dong'), or subway station. If the user's request is vague like 'a park nearby', you MUST ask for a more specific location BEFORE using this tool.
     """
     print(f"TOOL CALLED: find_nearby_places(query='{query}')")
 
