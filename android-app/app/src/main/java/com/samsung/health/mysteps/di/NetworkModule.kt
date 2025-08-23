@@ -14,7 +14,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     // ⚠️ 중요: localhost는 에뮬레이터에서 접근할 수 없으므로 10.0.2.2를 사용해야 합니다.
-    private const val BASE_URL = "https://51b4ee3a9675.ngrok-free.app"
+    private const val BASE_URL = "https://ff5e95a53ace.ngrok-free.app"
 
     @Provides
     @Singleton

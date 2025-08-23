@@ -43,6 +43,8 @@ import javax.inject.Inject
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import com.samsung.health.mysteps.data.model.AiAnalysisResponse
 
 private const val TAG = "MainViewModel"
 
@@ -219,11 +221,10 @@ class MainViewModel @Inject constructor(
 
     // 메시지 전송 함수
     fun sendMessage(message: String) {
-        // 사용자 메시지를 채팅 목록에 추가
+        // 사용자 메시지와 로딩 메시지를 목록에 추가하는 부분 (기존과 동일)
         val userMessage = ChatMessage(text = message, sender = Sender.USER)
         _chatMessages.value = _chatMessages.value + userMessage
 
-        // AI 응답 대기 메시지 추가
         val loadingMessage = ChatMessage(text = "...", sender = Sender.MODEL)
         _chatMessages.value = _chatMessages.value + loadingMessage
 
@@ -232,10 +233,40 @@ class MainViewModel @Inject constructor(
                 val request = ChatRequest(userId = userId, sessionId = sessionId, message = message)
                 val response = chatApiService.sendMessage(request)
 
-                // AI 응답을 채팅 목록에 추가
-                val modelMessage = ChatMessage(text = response.chatResponse, sender = Sender.MODEL)
+                // ▼▼▼▼▼ [핵심 수정] 더욱 강력해진 JSON 파싱 로직 ▼▼▼▼▼
+                val rawResponse = response.chatResponse
+                var displayText: String
 
-                // 대기 메시지를 실제 응답으로 교체
+                // 1. 응답 문자열에서 첫 '{' 와 마지막 '}'를 찾아 순수 JSON 부분만 추출합니다.
+                val firstBrace = rawResponse.indexOf('{')
+                val lastBrace = rawResponse.lastIndexOf('}')
+
+                if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+                    val jsonString = rawResponse.substring(firstBrace, lastBrace + 1)
+
+                    try {
+                        // 2. 추출한 순수 JSON 문자열을 파싱합니다.
+                        val gson = Gson()
+                        val analysisResponse = gson.fromJson(jsonString, AiAnalysisResponse::class.java)
+
+                        // 3. 파싱 성공 시, 사용자용 텍스트를 가져옵니다. null이 아니면 사용하고, null이면 안전하게 원본 JSON을 보여줍니다.
+                        displayText = analysisResponse.response_for_user ?: jsonString
+
+                    } catch (e: Exception) {
+                        // 4. JSON 추출 후 파싱에 실패하면(형식이 잘못된 경우), 원본 응답을 그대로 사용합니다.
+                        Log.e("JsonParseError", "추출된 JSON 파싱 실패: ${e.message}")
+                        displayText = rawResponse
+                    }
+                } else {
+                    // 5. 문자열에서 '{' 또는 '}'를 찾지 못했다면, 일반 텍스트이므로 그대로 사용합니다.
+                    displayText = rawResponse
+                }
+                // ▲▲▲▲▲ [핵심 수정] 여기까지 ▲▲▲▲▲
+
+                // 최종적으로 정제된 텍스트로 메시지 객체를 생성합니다.
+                val modelMessage = ChatMessage(text = displayText.trim(), sender = Sender.MODEL)
+
+                // 대기 메시지를 실제 응답으로 교체합니다.
                 _chatMessages.value = _chatMessages.value.dropLast(1) + modelMessage
 
             } catch (e: Exception) {
