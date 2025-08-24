@@ -17,19 +17,22 @@ package com.samsung.health.mysteps.domain
 
 import com.samsung.android.sdk.health.data.error.HealthDataException
 import com.samsung.health.mysteps.data.model.StepData
+import com.samsung.health.mysteps.data.model.SleepData
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 class ReadStepDataUseCase @Inject constructor(
+
     private val readStepGoalFromTodayUseCase: ReadStepGoalFromTodayUseCase,
     private val readStepsFromATimeRangeUseCase: ReadStepsFromATimeRangeUseCase,
     private val readHourlyStepsByTimeRangeUseCase: ReadHourlyStepsByTimeRangeUseCase
+
 ) {
     @Throws(HealthDataException::class)
-    suspend operator fun invoke(): StepData {
-        val startTime = LocalDate.now().atStartOfDay()
-        val endTime = LocalDateTime.now()
+    suspend operator fun invoke(date: LocalDate): StepData {
+        val startTime = date.atStartOfDay()
+        val endTime = startTime.plusDays(1).minusNanos(1)
         val stepGoal = readStepGoalFromTodayUseCase()
         val stepCount = readStepsFromATimeRangeUseCase(startTime, endTime)
         val stepsByHour = readHourlyStepsByTimeRangeUseCase(startTime, endTime)

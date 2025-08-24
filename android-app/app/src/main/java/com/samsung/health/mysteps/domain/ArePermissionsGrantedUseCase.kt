@@ -39,5 +39,6 @@ object Permissions {
         Permission.of(DataTypes.STEPS, AccessType.READ),
         Permission.of(DataTypes.STEPS_GOAL, AccessType.READ),
         Permission.of(DataTypes.SLEEP, AccessType.READ),
+        Permission.of(DataTypes.HEART_RATE, AccessType.READ),
     )
 }

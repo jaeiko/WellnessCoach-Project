@@ -4,7 +4,8 @@ package com.samsung.health.mysteps.data.model
 data class ChatRequest(
     val userId: String,
     val sessionId: String,
-    val message: String
+    val message: String,
+    val healthData: Map<String, Any>? = null // 널 허용 타입으로 추가
 )
 
 // 서버로부터 받을 응답 모델
