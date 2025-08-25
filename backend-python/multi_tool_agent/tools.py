@@ -3,6 +3,7 @@ import os
 import requests
 import datetime
 import json
+import re
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -116,29 +117,55 @@ def Youtube(query: str) -> str:
 
 def convert_natural_time_to_iso(time_expression: str) -> str:
     """
-    "오늘 저녁 7시 30분", "모레 20:15"과 같은 자연어 시간 표현을
+    "오늘 저녁 7시 30분", "모레 20:15", "25.08.25 20시" 등 다양한 자연어 시간 표현을
     'YYYY-MM-DDTHH:MM:SS' 형식의 ISO 문자열로 변환합니다.
     """
-    print(
-        f"TOOL CALLED: convert_natural_time_to_iso(expression='{time_expression}')")
-    try:
-        # 🔽 [핵심 수정 1] "오늘"의 기준이 될 현재 시간을 가져옵니다.
-        now = datetime.datetime.now()
+    print(f"TOOL CALLED: convert_natural_time_to_iso(expression='{time_expression}')")
+    
+    # ▼▼▼ [핵심 추가] 입력된 시간 표현을 전처리하는 부분 ▼▼▼
+    processed_expression = time_expression
+    
+    # 1. "HH:MM" 형식을 "HH시 MM분"으로 변경 (예: "08:30" -> "08시 30분")
+    processed_expression = re.sub(r'(\d{1,2}):(\d{2})', r'\1시 \2분', processed_expression)
+    
+    # 2. 날짜 구분자 '.'를 '-'로 변경 (예: "25.08.26" -> "25-08-26")
+    # 년도가 2자리일 경우 '20'을 앞에 붙여줌 (예: "25-08-26" -> "2025-08-26")
+    def fix_year(match):
+        year = match.group(1)
+        if len(year) == 2:
+            return f"20{year}{match.group(2)}"
+        return match.group(0)
+    processed_expression = re.sub(r'(\d{2,4})[.\s]+(\d{1,2})[.\s]+(\d{1,2})', r'\1-\2-\3', processed_expression)
+    processed_expression = re.sub(r'(\d{2})-\d{1,2}-\d{1,2}', fix_year, processed_expression)
 
-        # 🔽 [핵심 수정 2] settings에 'RELATIVE_BASE'를 추가하여 기준점을 명시합니다.
+    print(f"전처리된 시간 표현: '{processed_expression}'")
+    # ▲▲▲ 전처리 로직 끝 ▲▲▲
+
+    try:
+        now = datetime.datetime.now()
+        
+        # [수정] 전처리된 표현식을 dateparser에 전달
         parsed_time = dateparser.parse(
-            time_expression,
+            processed_expression, # 수정된 부분
             languages=['ko'],
             settings={'PREFER_DATES_FROM': 'future',
                       'TIMEZONE': 'Asia/Seoul', 'RELATIVE_BASE': now}
         )
         if parsed_time:
-            return parsed_time.strftime('%Y-%m-%dT%H:%M:%S')
+            # 성공적으로 변환된 경우
+            iso_format = parsed_time.strftime('%Y-%m-%dT%H:%M:%S')
+            print(f"✅ 변환 성공: {iso_format}")
+            return iso_format
         else:
-            return f"오류: '{time_expression}'을(를) 시간으로 해석할 수 없습니다."
+            # dateparser가 변환에 실패한 경우
+            error_msg = f"오류: '{time_expression}'을(를) 시간으로 해석할 수 없습니다."
+            print(f"❌ 변환 실패: {error_msg}")
+            return error_msg
+            
     except Exception as e:
-        return f"시간 변환 중 오류 발생: {e}"
-
+        error_msg = f"시간 변환 중 오류 발생: {e}"
+        print(f"❌ 변환 실패: {error_msg}")
+        return error_msg
 
 def _get_calendar_credentials() -> Credentials | None:
     """
