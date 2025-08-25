@@ -144,7 +144,16 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val healthDataPayload = if (message.contains("분석")) {
-                    prepareHealthDataPayload()
+                    // "오늘" 키워드가 있는지 확인합니다.
+                    if (message.contains("오늘")) {
+                        // "오늘"이 있으면, 현재 날짜 기준으로 데이터를 즉시 다시 가져옵니다.
+                        Log.d(TAG, "오늘 데이터 분석 요청. 현재 날짜 데이터로 페이로드를 준비합니다.")
+                        prepareHealthDataPayload(LocalDate.now())
+                    } else {
+                        // "오늘"이 없으면, 기존처럼 현재 state (선택된 날짜) 기준으로 데이터를 준비합니다.
+                        Log.d(TAG, "선택된 날짜(${_selectedDate.value}) 데이터 분석 요청.")
+                        prepareHealthDataPayload()
+                    }
                 } else {
                     null
                 }
@@ -187,21 +196,33 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun prepareHealthDataPayload(): Map<String, Any> {
+    private suspend fun prepareHealthDataPayload(date: LocalDate? = null): Map<String, Any> {
         val payload = mutableMapOf<String, Any>()
 
-        val stepsData = state.value.steps
+        val finalStepsData: StepData
+        val finalSleepData: SleepData?
+
+        if (date != null) {
+            // 날짜가 지정된 경우, 해당 날짜의 데이터를 새로 읽어옵니다.
+            finalStepsData = readStepDataUseCase(date)
+            finalSleepData = readSleepDataUseCase(date)
+        } else {
+            // 날짜가 지정되지 않은 경우, 기존 state의 데이터를 사용합니다.
+            finalStepsData = state.value.steps
+            finalSleepData = state.value.sleepData
+        }
+
         val exerciseData = mapOf(
             "exercise_type" to "STEPS_DAILY",
             "stats" to mapOf(
-                "total_steps" to stepsData.count,
-                "goal" to stepsData.goal,
-                "hourly_steps" to stepsData.hourly.associate { it.startTime.hour.toString() to it.count }
+                "total_steps" to finalStepsData.count,
+                "goal" to finalStepsData.goal,
+                "hourly_steps" to finalStepsData.hourly.associate { it.startTime.hour.toString() to it.count }
             )
         )
         payload["exercise_data"] = listOf(exerciseData)
 
-        state.value.sleepData?.let { sleepData ->
+        finalSleepData?.let { sleepData ->
             val sleepPayload = mapOf(
                 "duration_minutes" to sleepData.totalSleepMinutes,
                 "stages" to sleepData.stages.map { mapOf("stage" to it.stage, "duration_minutes" to it.durationMinutes) }
@@ -209,7 +230,7 @@ class MainViewModel @Inject constructor(
             payload["sleep_data"] = sleepPayload
         }
 
-        Log.d(TAG, "백엔드로 전송할 데이터: $payload")
+        Log.d(TAG, "백엔드로 전송할 데이터 (${date ?: _selectedDate.value}): $payload")
         return payload
     }
 
