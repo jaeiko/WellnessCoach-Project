@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.samsung.health.mysteps.data.model.Day
 import com.samsung.health.mysteps.data.model.HeartRateData
 import com.samsung.health.mysteps.data.model.SleepData
+import com.samsung.health.mysteps.presentation.ui.SleepSummaryCard
 import com.samsung.health.mysteps.data.model.StepData
 import java.time.LocalDate
 
@@ -39,6 +40,11 @@ fun DashboardScreen(
         ) {
             item {
                 StepsFromTodayCard(stepCount = steps.count, stepGoal = steps.goal)
+            }
+            sleepData?.let {
+                item {
+                    SleepSummaryCard(sleepData = it)
+                }
             }
             // TODO: 여기에 SleepSummaryCard, HeartRateCard 등을 추가하면 대시보드가 완성됩니다.
         }
