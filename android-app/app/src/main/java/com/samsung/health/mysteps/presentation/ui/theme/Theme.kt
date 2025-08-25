@@ -18,12 +18,26 @@ package com.samsung.health.mysteps.presentation.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+private val LightColorScheme = lightColorScheme(
+    primary = VibrantCoral,
+    primaryContainer = VibrantCoral.copy(alpha = 0.2f), // 메인 색의 투명한 버전
+    onPrimary = Color.White,
+
+    background = PureWhite,
+    onBackground = DeepBlue,
+
+    surface = PureWhite,
+    surfaceVariant = LightGrey,
+    onSurface = DeepBlue,
+    onSurfaceVariant = MediumGrey
+)
 private val DarkColorScheme = darkColorScheme(
 
     primary = AppleGreen,
@@ -48,17 +62,7 @@ fun PhoneAppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-
-        dynamicColor -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        // Dark Theme at all times
-        darkTheme -> DarkColorScheme
-        else -> DarkColorScheme
-    }
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -66,3 +70,4 @@ fun PhoneAppTheme(
         content = content
     )
 }
+
