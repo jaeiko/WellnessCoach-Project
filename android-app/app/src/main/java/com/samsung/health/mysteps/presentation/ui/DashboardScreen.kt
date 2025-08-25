@@ -6,7 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +26,19 @@ import com.samsung.health.mysteps.data.model.StepData
 import java.time.LocalDate
 
 @Composable
+fun AppTitle() {
+    Text(
+        text = "WellnessCoachAI",
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    )
+}
+
+@Composable
 fun DashboardScreen(
     steps: StepData,
     sleepData: SleepData?,
@@ -26,7 +46,8 @@ fun DashboardScreen(
     weekDays: List<Day>,
     onDateSelected: (LocalDate) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        AppTitle()
         Spacer(modifier = Modifier.height(16.dp))
         // 상단에 날짜 선택 캘린더 UI를 추가합니다.
         WeekCalendar(days = weekDays, onDateSelected = onDateSelected)

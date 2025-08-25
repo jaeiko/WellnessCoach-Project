@@ -63,7 +63,7 @@ fun StepsFromTodayCard(
                 }
             },
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
                 .padding(40.dp, 54.dp, 40.dp, 0.dp)
                 .align(Alignment.CenterHorizontally)
@@ -88,14 +88,14 @@ fun StepsFromTodayCard(
             Text(
                 style = MaterialTheme.typography.labelSmall,
                 text = "0",
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
             )
             Text(
                 style = MaterialTheme.typography.labelSmall,
                 text = description,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
             )
