@@ -50,6 +50,19 @@ fun DashboardScreen(
     ) {
         AppTitle()
         Spacer(modifier = Modifier.height(16.dp))
+        val currentMonth = weekDays.getOrNull(3)?.date?.month?.getDisplayName(
+            java.time.format.TextStyle.FULL, java.util.Locale.KOREAN
+        )
+        if (currentMonth != null) {
+            Text(
+                text = currentMonth,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
         WeekCalendar(days = weekDays, onDateSelected = onDateSelected)
         Spacer(modifier = Modifier.height(16.dp))
 
