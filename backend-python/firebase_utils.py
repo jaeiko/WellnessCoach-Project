@@ -37,6 +37,31 @@ def save_analysis_json(db, user_id: str, session_id: str, analysis_data: dict):
     print(f"✅ Firestore에 분석 결과 저장 완료: {user_id}/{doc_id}")
 
 
+def get_user_status(db, user_id: str) -> str:
+    """
+    Firestore에서 사용자의 현재 대화 상태를 가져옵니다.
+    상태가 없으면 'NEEDS_ANALYSIS'를 기본값으로 반환합니다.
+    """
+    doc_ref = db.collection('users').document(user_id)
+    doc = doc_ref.get()
+    if doc.exists:
+        # to_dict()의 get 메서드를 사용하여 'status' 키가 없을 경우 기본값 반환
+        return doc.to_dict().get('status', 'NEEDS_ANALYSIS')
+    else:
+        # 사용자가 아예 존재하지 않는 경우
+        return 'NEEDS_ANALYSIS'
+    
+
+def update_user_status(db, user_id: str, new_status: str):
+    """
+    Firestore에서 사용자의 대화 상태를 업데이트(변경)합니다.
+    """
+    doc_ref = db.collection('users').document(user_id)
+    # set 메서드에 merge=True를 사용하여 다른 필드는 유지하고 status 필드만 추가/수정
+    doc_ref.set({'status': new_status}, merge=True)
+    print(f"✅ 사용자 '{user_id}'의 상태를 '{new_status}'(으)로 업데이트했습니다.")
+
+
 def get_user_profile(db, user_id: str) -> dict | None:
     """
     Firestore에서 사용자 프로필 정보를 가져옵니다. 없으면 None을 반환합니다.
